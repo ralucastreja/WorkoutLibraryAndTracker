@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WorkoutLibraryAndTracker.Data;
 using WorkoutLibraryAndTracker.Models;
 
 namespace WorkoutLibraryAndTracker.Pages.Workouts
@@ -20,6 +15,9 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
             _context = context;
         }
 
+        // Holds the dropdown list of categories
+        public SelectList CategorySelectList { get; set; }
+
         [BindProperty]
         public Workout Workout { get; set; } = default!;
 
@@ -30,29 +28,45 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
                 return NotFound();
             }
 
-            var workout =  await _context.Workouts.FirstOrDefaultAsync(m => m.WorkoutId == id);
+            // Load the workout from the database
+            var workout = await _context.Workouts
+                // Optionally include Category if you want immediate access to its name, etc.
+                .Include(w => w.Category)
+                .FirstOrDefaultAsync(m => m.WorkoutId == id);
+
             if (workout == null)
             {
                 return NotFound();
             }
+
             Workout = workout;
-           ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+
+            // Build a SelectList for categories, selecting the workout’s current CategoryId by default
+            var categories = await _context.Categories.ToListAsync();
+            CategorySelectList = new SelectList(categories, "CategoryId", "Name", Workout.CategoryId);
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
+        // Handles the form submission for editing an existing Workout
         public async Task<IActionResult> OnPostAsync()
         {
+            // If validation fails (e.g., required fields are missing), redisplay form with Category dropdown
             if (!ModelState.IsValid)
             {
+                // Reload the category list
+                var categories = await _context.Categories.ToListAsync();
+                CategorySelectList = new SelectList(categories, "CategoryId", "Name", Workout.CategoryId);
+
                 return Page();
             }
 
+            // Mark the Workout entity as modified so EF will update it
             _context.Attach(Workout).State = EntityState.Modified;
 
             try
             {
+                // Save changes to the database
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -67,6 +81,7 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
                 }
             }
 
+            // On success, redirect back to the Index page
             return RedirectToPage("./Index");
         }
 

@@ -18,7 +18,8 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
         public async Task OnGetAsync()
         {
             Workout = await _context.Workouts
-                .Include(w => w.Category).ToListAsync();
+                .Include(w => w.Category)
+                .ToListAsync();
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WorkoutLibraryAndTracker.Data;
+using Microsoft.EntityFrameworkCore;
 using WorkoutLibraryAndTracker.Models;
 
 namespace WorkoutLibraryAndTracker.Pages.Workouts
@@ -19,20 +15,28 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
             _context = context;
         }
 
-        public IActionResult OnGet()
-        {
-        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
-            return Page();
-        }
+        // Holds the dropdown list of categories
+        public SelectList CategorySelectList { get; set; }
 
         [BindProperty]
         public Workout Workout { get; set; } = default!;
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            CategorySelectList = new SelectList(categories, "CategoryId", "Name");
+
+            return Page();
+        }
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
+                // If the model state is invalid, reload the categories so the dropdown is available again
+                var categories = await _context.Categories.ToListAsync();
+                CategorySelectList = new SelectList(categories, "CategoryId", "Name");
                 return Page();
             }
 
