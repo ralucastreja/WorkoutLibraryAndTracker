@@ -17,7 +17,6 @@
             @if (Model.WorkoutLog != null && Model.WorkoutLog.Any())
             {
                 <th>@Html.DisplayNameFor(m => m.WorkoutLog[0].Date)</th>
-                <th>@Html.DisplayNameFor(m => m.WorkoutLog[0].Duration)</th>
                 <th>@Html.DisplayNameFor(m => m.WorkoutLog[0].Notes)</th>
                 <th>@Html.DisplayNameFor(m => m.WorkoutLog[0].Workout)</th>
             }
@@ -25,7 +24,6 @@
             {
                 <!-- Fallback column names if the list is empty -->
                 <th>Date</th>
-                <th>Duration</th>
                 <th>Notes</th>
                 <th>Workout</th>
             }
@@ -38,9 +36,6 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Duration)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Notes)
