@@ -18,8 +18,14 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
         // Holds the dropdown list of categories
         public SelectList CategorySelectList { get; set; }
 
+        // This will store all workouts in a dropdown list.
+        public IEnumerable<SelectListItem> WorkoutsSelectList { get; set; }
+
         [BindProperty]
         public Workout Workout { get; set; } = default!;
+
+        [BindProperty]
+        public WorkoutLog WorkoutLog { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
