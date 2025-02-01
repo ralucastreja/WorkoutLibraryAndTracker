@@ -24,9 +24,9 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
                 }
 
             Workout = await _context.Workouts
-                .Include(w => w.Category)  // Ensure Category is loaded
-                .Include(w => w.WorkoutEquipments)  // Load WorkoutEquipment relations
-                .ThenInclude(we => we.Equipment)  // Load Equipment details
+                .Include(w => w.Category)  
+                .Include(w => w.WorkoutEquipments)  
+                .ThenInclude(we => we.Equipment)
                 .FirstOrDefaultAsync(m => m.WorkoutId == id);
 
             if (Workout == null)
