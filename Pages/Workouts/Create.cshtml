@@ -10,7 +10,6 @@
 <form method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
 
-    <!-- Workout Fields -->
     <div class="form-group">
         <label asp-for="Workout.Name" class="control-label"></label>
         <input asp-for="Workout.Name" class="form-control" />
@@ -23,21 +22,18 @@
         <span asp-validation-for="Workout.Description" class="text-danger"></span>
     </div>
 
-    <!-- Add Intensity Field (REQUIRED) -->
     <div class="form-group">
         <label asp-for="Workout.Intensity" class="control-label"></label>
         <input asp-for="Workout.Intensity" class="form-control" />
         <span asp-validation-for="Workout.Intensity" class="text-danger"></span>
     </div>
 
-    <!-- Add Duration Field (if you want the user to input it) -->
     <div class="form-group">
         <label asp-for="Workout.Duration" class="control-label"></label>
         <input asp-for="Workout.Duration" class="form-control" />
         <span asp-validation-for="Workout.Duration" class="text-danger"></span>
     </div>
 
-    <!-- Category Dropdown -->
     <div class="form-group">
         <label asp-for="Workout.CategoryId" class="control-label"></label>
         <select asp-for="Workout.CategoryId"
@@ -48,10 +44,15 @@
         <span asp-validation-for="Workout.CategoryId" class="text-danger"></span>
     </div>
 
+    <div>
+        <label for="equipment">Select Equipment (multiple can be selected)</label>
+        <select asp-for="SelectedEquipmentIds" asp-items="Model.EquipmentSelectList" class="form-control" multiple>
+        </select>
+    </div>
+
     <hr />
     <h3>Log Details</h3>
 
-    <!-- WorkoutLog Fields -->
     <div class="form-group">
         <label asp-for="WorkoutLog.Date" class="control-label"></label>
         <input asp-for="WorkoutLog.Date" class="form-control" type="date" />

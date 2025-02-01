@@ -18,6 +18,16 @@ namespace WorkoutLibraryAndTracker.Data
             modelBuilder.Entity<WorkoutEquipment>()
                 .HasKey(we => new { we.WorkoutId, we.EquipmentId });
 
+            modelBuilder.Entity<WorkoutEquipment>()
+                .HasOne(we => we.Workout)
+                .WithMany(w => w.WorkoutEquipments)
+                .HasForeignKey(we => we.WorkoutId);
+
+            modelBuilder.Entity<WorkoutEquipment>()
+                .HasOne(we => we.Equipment)
+                .WithMany(e => e.WorkoutEquipments)
+                .HasForeignKey(we => we.EquipmentId);
+
             modelBuilder.Entity<Workout>()
                 .HasOne(w => w.Category)
                 .WithMany(c => c.Workouts)

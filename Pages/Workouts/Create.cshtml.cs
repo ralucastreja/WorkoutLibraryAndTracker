@@ -16,21 +16,25 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
             _context = context;
             }
 
-        // Holds the dropdown list of categories
         public SelectList CategorySelectList { get; set; }
+        public SelectList EquipmentSelectList { get; set; }
 
-        // The Workout we are creating
         [BindProperty]
         public Workout Workout { get; set; } = default!;
 
-        // The WorkoutLog we are creating (for the newly created Workout)
         [BindProperty]
         public WorkoutLog WorkoutLog { get; set; } = default!;
+
+        [BindProperty]
+        public List<int> SelectedEquipmentIds { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
             {
             var categories = await _context.Categories.ToListAsync();
             CategorySelectList = new SelectList(categories, "CategoryId", "Name");
+
+            var equipments = await _context.Equipments.ToListAsync();
+            EquipmentSelectList = new SelectList(equipments, "EquipmentId", "Name");
 
             return Page();
             }
@@ -41,32 +45,51 @@ namespace WorkoutLibraryAndTracker.Pages.Workouts
                 {
                 var categories = await _context.Categories.ToListAsync();
                 CategorySelectList = new SelectList(categories, "CategoryId", "Name");
+
+                var equipments = await _context.Equipments.ToListAsync();
+                EquipmentSelectList = new SelectList(equipments, "EquipmentId", "Name");
+
                 return Page();
                 }
 
-            // Ensure a valid category is selected
             if (Workout.CategoryId == 0)
                 {
                 ModelState.AddModelError("Workout.CategoryId", "You must select a category.");
+
                 var categories = await _context.Categories.ToListAsync();
                 CategorySelectList = new SelectList(categories, "CategoryId", "Name");
+
+                var equipments = await _context.Equipments.ToListAsync();
+                EquipmentSelectList = new SelectList(equipments, "EquipmentId", "Name");
+
                 return Page();
                 }
 
-            // 1) Create the Workout
             _context.Workouts.Add(Workout);
             await _context.SaveChangesAsync();
 
-            // Ensure WorkoutLog is initialized
             if (WorkoutLog == null)
                 {
                 WorkoutLog = new WorkoutLog();
                 }
 
-            // 2) Create a WorkoutLog referencing the new Workout
             WorkoutLog.WorkoutId = Workout.WorkoutId;
             _context.WorkoutLogs.Add(WorkoutLog);
             await _context.SaveChangesAsync();
+
+           
+            if (SelectedEquipmentIds != null && SelectedEquipmentIds.Any())
+                {
+                foreach (var equipmentId in SelectedEquipmentIds)
+                    {
+                    _context.WorkoutEquipments.Add(new WorkoutEquipment
+                        {
+                        WorkoutId = Workout.WorkoutId,
+                        EquipmentId = equipmentId
+                        });
+                    }
+                await _context.SaveChangesAsync();
+                }
 
             return RedirectToPage("./Index");
             }

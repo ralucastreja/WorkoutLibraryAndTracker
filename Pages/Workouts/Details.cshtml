@@ -5,10 +5,10 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Workout Details</h1>
 
 <div>
-    <h4>Workout</h4>
+    <h4>Workout Information</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -27,7 +27,7 @@
             @Html.DisplayNameFor(model => model.Workout.Duration)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Workout.Duration)
+            @Html.DisplayFor(model => model.Workout.Duration) minutes
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Workout.Intensity)
@@ -39,11 +39,28 @@
             @Html.DisplayNameFor(model => model.Workout.Category)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Workout.Category.CategoryId)
+            @Model.Workout.Category?.Name
         </dd>
     </dl>
 </div>
+
+<!-- Display Equipment Used -->
+@if (Model.Workout.WorkoutEquipments != null && Model.Workout.WorkoutEquipments.Any())
+{
+    <h4>Equipment Used</h4>
+    <ul>
+        @foreach (var workoutEquipment in Model.Workout.WorkoutEquipments)
+        {
+            <li>@workoutEquipment.Equipment.Name</li>
+        }
+    </ul>
+}
+else
+{
+    <p><strong>No equipment associated with this workout.</strong></p>
+}
+
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Workout.WorkoutId">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="./Edit" asp-route-id="@Model.Workout.WorkoutId" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
 </div>

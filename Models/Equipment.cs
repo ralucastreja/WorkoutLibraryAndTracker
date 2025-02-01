@@ -6,6 +6,6 @@
         public string Name { get; set; }
 
         // Navigation Property
-        public ICollection<WorkoutEquipment> WorkoutEquipments { get; set; }
+        public ICollection<WorkoutEquipment> WorkoutEquipments { get; set; } = [];
         }
     }
